@@ -1,100 +1,41 @@
 #include "main.h"
 
-unsigned int convert_c(va_list args, buffer_t *output,
-				unsigned char flags, int wid, int prec, unsigned char len);
-unsigned int convert_percent(va_list args, buffer_t *output,
-				unsigned char flags, int wid, int prec, unsigned char len);
-unsigned int convert_p(va_list args, buffer_t *output,
-				unsigned char flags, int wid, int prec, unsigned char len);
-
 /**
- * convert_c - Converts an argument to an unsigned char and
- *             stores it to a buffer contained in a struct.
- * @args: A va_list pointing to the argument to be converted.
- * @flags: Flag modifiers.
- * @wid: A width modifier.
- * @prec: A precision modifier.
- * @len: A length modifier.
- * @output: A buffer_t struct containing a character array.
+ * get_precision - Calculates the precision for printing
+ * @format: Formatted string in which to print the arguments
+ * @i: List of arguments to be printed.
+ * @list: list of arguments.
  *
- * Return: The number of bytes stored to the buffer.
+ * Return: Precision.
  */
-unsigned int convert_c(va_list args, buffer_t *output,
-		unsigned char flags, int wid, int prec, unsigned char len)
+int get_precision(const char *format, int *i, va_list list)
 {
-	char c;
-	unsigned int ret = 0;
+	int curr_i = *i + 1;
+	int precision = -1;
 
-	(void)prec;
-	(void)len;
+	if (format[curr_i] != '.')
+		return (precision);
 
-	c = va_arg(args, int);
+	precision = 0;
 
-	ret += print_width(output, ret, flags, wid);
-	ret += _memcpy(output, &c, 1);
-	ret += print_neg_width(output, ret, flags, wid);
+	for (curr_i += 1; format[curr_i] != '\0'; curr_i++)
+	{
+		if (is_digit(format[curr_i]))
+		{
+			precision *= 10;
+			precision += format[curr_i] - '0';
+		}
+		else if (format[curr_i] == '*')
+		{
+			curr_i++;
+			precision = va_arg(list, int);
+			break;
+		}
+		else
+			break;
+	}
 
-	return (ret);
-}
+	*i = curr_i - 1;
 
-/**
- * convert_percent - Stores a percent sign to a
- *                   buffer contained in a struct.
- * @args: A va_list pointing to the argument to be converted.
- * @flags: Flag modifiers.
- * @wid: A width modifier.
- * @prec: A precision modifier.
- * @len: A length modifier.
- * @output: A buffer_t struct containing a character array.
- *
- * Return: The number of bytes stored to the buffer (always 1).
- */
-unsigned int convert_percent(va_list args, buffer_t *output,
-		unsigned char flags, int wid, int prec, unsigned char len)
-{
-	char percent = '%';
-	unsigned int ret = 0;
-
-	(void)args;
-	(void)prec;
-	(void)len;
-
-	ret += print_width(output, ret, flags, wid);
-	ret += _memcpy(output, &percent, 1);
-	ret += print_neg_width(output, ret, flags, wid);
-
-	return (ret);
-}
-
-/**
- * convert_p - Converts the address of an argument to hex and
- *             stores it to a buffer contained in a struct.
- * @args: A va_list pointing to the argument to be converted.
- * @flags: Flag modifiers.
- * @wid: A width modifier.
- * @prec: A precision modifier.
- * @len: A length modifier.
- * @output: A buffer_t struct containing a character array.
- *
- * Return: The number of bytes stored to the buffer.
- */
-unsigned int convert_p(va_list args, buffer_t *output,
-		unsigned char flags, int wid, int prec, unsigned char len)
-{
-	char *null = "(nil)";
-	unsigned long int address;
-	unsigned int ret = 0;
-
-	(void)len;
-
-	address = va_arg(args, unsigned long int);
-	if (address == '\0')
-		return (_memcpy(output, null, 5));
-
-	flags |= 32;
-	ret += convert_ubase(output, address, "0123456789abcdef",
-			flags, wid, prec);
-	ret += print_neg_width(output, ret, flags, wid);
-
-	return (ret);
+	return (precision);
 }
