@@ -153,7 +153,7 @@ int print_hexa(va_list types, char map_to[], char buffer[],
 	{
 		buffer[i--] = flag_ch;
 		buffer[i--] = '0';
-																		}
+	}
 
 	i++;
 

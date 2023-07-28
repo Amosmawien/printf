@@ -1,1 +1,1 @@
-this is a group project done by Amos and Mayiik
+this is the project team of Mayiik and Mawien in ALX-AFRICA-SE

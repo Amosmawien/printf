@@ -71,7 +71,7 @@ int print_string(va_list types, char buffer[],
 			return (width);
 		}
 	}
-	
+
 	return (write(1, str, length));
 }
 /************************* PRINT PERCENT SIGN *************************/
@@ -82,7 +82,7 @@ int print_string(va_list types, char buffer[],
  * @flags:  Calculates active flags
  * @width: get width.
  * @precision: Precision specification
- * @size: Size specifier
+* @size: Size specifier
  * Return: Number of chars printed
  */
 int print_percent(va_list types, char buffer[],
@@ -130,7 +130,7 @@ int print_int(va_list types, char buffer[],
 		is_negative = 1;
 	}
 
-	while (num > 0)
+	while (num )
 	{
 		buffer[i--] = (num % 10) + '0';
 		num /= 10;
